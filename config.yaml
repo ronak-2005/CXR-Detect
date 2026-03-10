@@ -1,0 +1,39 @@
+data:
+  root: data/chest_xray
+  img_size: 224  
+  num_workers: 4  
+
+model:
+  architecture: resnet50
+  pretrained: true
+  dropout: 0.4
+  num_classes: 2
+
+training:
+  epochs: 40
+  batch_size: 10
+  lr: 1e-4
+  early_stopping_patience: 8
+  weight_decay: 1e-4
+  label_smoothing: 0.1  
+  unfreeze_epoch: 5   
+  warmup_epochs: 2
+
+paths:
+  checkpoints: checkpoints
+  outputs: outputs
+  best_model: checkpoints/best_model.pth
+  history: outputs/history.json 
+  metrics: outputs/metrics.json
+
+augmentation:
+  random_horizontal_flip: 0.5   
+  random_rotation: 10         
+  brightness: 0.2              
+  contrast: 0.2                
+  random_erasing: 0.1          
+
+evaluation:
+  threshold: 0.5                
+  tta: true                     
+  tta_n: 5         
