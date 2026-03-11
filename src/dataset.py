@@ -90,3 +90,80 @@ def build_sampler(dataset):
     )
 
     return sampler
+
+
+def build_loaders(cfg):
+
+    img_size = cfg["data"]["img_size"]
+    root     = Path(cfg["data"]["root"])
+    batch_size = cfg["training"]["batch_size"]
+    workers    = cfg["data"]["num_workers"]
+
+    train_ds = XRayDataset(root / "train", transform=get_transforms(img_size, "train", cfg))
+    val_ds   = XRayDataset(root / "val",   transform=get_transforms(img_size, "val", cfg))
+    test_ds  = XRayDataset(root / "test",  transform=get_transforms(img_size, "test", cfg))
+
+    sampler = build_sampler(train_ds)
+
+    train_loader = DataLoader(
+        train_ds,
+        batch_size=batch_size,
+        sampler=sampler,
+        num_workers=workers,
+        pin_memory=True,
+        drop_last=True
+    )
+
+    val_loader = DataLoader(
+        val_ds,
+        batch_size=batch_size * 2,
+        shuffle=False,
+        num_workers=workers,
+        pin_memory=True
+    )
+
+    test_loader = DataLoader(
+        test_ds,
+        batch_size=batch_size * 2,
+        shuffle=False,
+        num_workers=workers,
+        pin_memory=True
+    )
+
+    return train_loader, val_loader, test_loader, train_ds, val_ds, test_ds
+
+
+def get_tta_transforms(img_size):
+    mean = [0.485, 0.456, 0.406]
+    std  = [0.229, 0.224, 0.225]
+    return [
+        transforms.Compose([
+            transforms.Resize((img_size, img_size)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std),
+        ]),
+        transforms.Compose([
+            transforms.Resize((img_size, img_size)),
+            transforms.RandomHorizontalFlip(p=1.0),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std),
+        ]),
+        transforms.Compose([
+            transforms.Resize((img_size + 20, img_size + 20)),
+            transforms.CenterCrop(img_size),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std),
+        ]),
+        transforms.Compose([
+            transforms.Resize((img_size, img_size)),
+            transforms.RandomRotation(degrees=(10, 10)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std),
+        ]),
+        transforms.Compose([
+            transforms.Resize((img_size, img_size)),
+            transforms.RandomRotation(degrees=(-10, -10)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std),
+        ]),
+    ]

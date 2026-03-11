@@ -12,19 +12,21 @@ model:
 training:
   epochs: 40
   batch_size: 10
-  lr: 1e-4
+  lr: 0.0001
   early_stopping_patience: 8
-  weight_decay: 1e-4
+  weight_decay: 0.0001
   label_smoothing: 0.1  
   unfreeze_epoch: 5   
   warmup_epochs: 2
+  mixed_precision: true
 
 paths:
   checkpoints: checkpoints
   outputs: outputs
-  best_model: checkpoints/best_model.pth
+  best_model: checkpoints/best.pt
   history: outputs/history.json 
   metrics: outputs/metrics.json
+  onnx_model: outputs/model.onnx
 
 augmentation:
   random_horizontal_flip: 0.5   
@@ -36,4 +38,8 @@ augmentation:
 evaluation:
   threshold: 0.5                
   tta: true                     
-  tta_n: 5         
+  tta_n: 5 
+
+scheduler:
+  name: cosine
+  min_lr: 0.000001        
