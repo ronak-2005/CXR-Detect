@@ -24,7 +24,7 @@ METRICS_PATH = BASE / "outputs" / "metrics.json"
 
 # ── PAGE CONFIG ─────────────────────────
 st.set_page_config(
-    page_title="PneumoScan AI",
+    page_title="CXR-DETECT",
     page_icon="🫁",
     layout="centered",
 )
