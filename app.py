@@ -226,7 +226,7 @@ def run_inference(img_pil, model, cfg, device, threshold):
 # ── HEADER ─────────────────────────
 st.markdown("""
 <div class="ps-header">
-<div class="ps-logo">Pneumo<span>Scan</span> AI</div>
+<div class="ps-logo">CXR<span>_DETECT</span></div>
 <div class="ps-tagline">Chest X-ray Pneumonia Detection</div>
 </div>
 """, unsafe_allow_html=True)
